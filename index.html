@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.5">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="zh-TW"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1">&lt;title&gt;大字報展示系統&lt;/title&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p1">body {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: black;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-family: monospace;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>color: #00ffcc;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 🌌 星空背景 */</p>
+<p class="p1">canvas {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: fixed;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>top: 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>left: 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>z-index: 0;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 主容器 */</p>
+<p class="p1">.container {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>z-index: 1;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 🔥 LED 字體效果 */</p>
+<p class="p1">.led {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>text-shadow:</p>
+<p class="p1"><span class="Apple-converted-space">    </span>0 0 5px #00ffcc,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>0 0 10px #00ffcc,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>0 0 20px #00ffcc,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>0 0 40px #00ffcc;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 🟢 多行橫向跑馬燈 */</p>
+<p class="p1">.row {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>white-space: nowrap;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-size: 8vw;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-weight: bold;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>animation: scroll-left linear infinite;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.row:nth-child(1) { animation-duration: 12s; }</p>
+<p class="p1">.row:nth-child(2) { animation-duration: 18s; color: #ffcc00; }</p>
+<p class="p1">.row:nth-child(3) { animation-duration: 10s; color: #ff6666; }</p>
+<p class="p2"><br></p>
+<p class="p1">@keyframes scroll-left {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>from { transform: translateX(100%); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>to { transform: translateX(-100%); }</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 📈 直向股票牆 */</p>
+<p class="p1">.vertical {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: absolute;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>right: 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>top: 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>width: 25%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>height: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>border-left: 2px solid #00ffcc;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.stock {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-size: 2vw;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>animation: scroll-up 15s linear infinite;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">@keyframes scroll-up {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>from { transform: translateY(100%); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>to { transform: translateY(-100%); }</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 🏆 排行榜 */</p>
+<p class="p1">.leaderboard {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: absolute;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>left: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>bottom: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-size: 2vw;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: rgba(0,0,0,0.5);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>padding: 10px;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 📱 手機優化 */</p>
+<p class="p1">@media (max-width: 768px) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.row { font-size: 12vw; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.stock { font-size: 4vw; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.leaderboard { font-size: 4vw; }</p>
+<p class="p1">}</p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;canvas id="bg"&gt;&lt;/canvas&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="container"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- 多行跑馬燈 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="row led"&gt;🔥 歡迎光臨 ｜ 今日活動熱烈進行中 🔥&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="row led"&gt;💰 打卡賺積分 ｜ 排行榜即時更新 💰&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="row led"&gt;🚀 業績衝刺 ｜ 團隊加油 🚀&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- 股票牆 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="vertical"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="stock led" id="stockList"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- 排行榜 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="leaderboard led" id="leaderboard"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>排行榜載入中...</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p1">/* 🌌 星空背景動畫 */</p>
+<p class="p1">const canvas = document.getElementById("bg");</p>
+<p class="p1">const ctx = canvas.getContext("2d");</p>
+<p class="p2"><br></p>
+<p class="p1">canvas.width = window.innerWidth;</p>
+<p class="p1">canvas.height = window.innerHeight;</p>
+<p class="p2"><br></p>
+<p class="p1">let stars = Array.from({length: 100}, () =&gt; ({</p>
+<p class="p1"><span class="Apple-converted-space">  </span>x: Math.random()*canvas.width,</p>
+<p class="p1"><span class="Apple-converted-space">  </span>y: Math.random()*canvas.height,</p>
+<p class="p1"><span class="Apple-converted-space">  </span>size: Math.random()*2</p>
+<p class="p1">}));</p>
+<p class="p2"><br></p>
+<p class="p1">function drawStars() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.clearRect(0,0,canvas.width,canvas.height);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.fillStyle = "#00ffcc";</p>
+<p class="p1"><span class="Apple-converted-space">  </span>stars.forEach(s =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.fillRect(s.x, s.y, s.size, s.size);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>s.y += 0.5;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (s.y &gt; canvas.height) s.y = 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>requestAnimationFrame(drawStars);</p>
+<p class="p1">}</p>
+<p class="p1">drawStars();</p>
+<p class="p2"><br></p>
+<p class="p1">/* 📈 模擬股票牆 */</p>
+<p class="p1">const stocks = [</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"AAPL ▲ 3.2%",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"TSLA ▼ 1.5%",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"NVDA ▲ 6.8%",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"GOOG ▲ 2.1%",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"META ▼ 0.8%",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"AMZN ▲ 4.0%"</p>
+<p class="p1">];</p>
+<p class="p2"><br></p>
+<p class="p1">function renderStocks() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById("stockList").innerHTML =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>stocks.concat(stocks).join("&lt;br&gt;");</p>
+<p class="p1">}</p>
+<p class="p1">renderStocks();</p>
+<p class="p2"><br></p>
+<p class="p1">/* 🏆 模擬排行榜（可串API） */</p>
+<p class="p1">let users = [</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{name:"小明", score:120},</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{name:"小美", score:150},</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{name:"阿強", score:90},</p>
+<p class="p1">];</p>
+<p class="p2"><br></p>
+<p class="p1">function updateLeaderboard() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>users.forEach(u =&gt; u.score += Math.floor(Math.random()*10));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>users.sort((a,b)=&gt;b.score-a.score);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>let html = "&lt;b&gt;🏆 排行榜&lt;/b&gt;&lt;br&gt;";</p>
+<p class="p1"><span class="Apple-converted-space">  </span>users.forEach((u,i)=&gt;{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>html += `${i+1}. ${u.name} - ${u.score}&lt;br&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById("leaderboard").innerHTML = html;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">setInterval(updateLeaderboard, 3000);</p>
+<p class="p1">updateLeaderboard();</p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
