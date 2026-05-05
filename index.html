@@ -3,68 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LED 跑馬燈大字報</title>
+    <title>LED 大字報 - 閃爍隱藏版</title>
     <style>
-        /* 重置預設樣式並設定黑底 */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             background-color: #000000;
-            overflow: hidden; /* 隱藏捲軸 */
+            overflow: hidden;
             font-family: '微軟正黑體', sans-serif;
         }
 
-        /* 控制面板的樣式 */
-        .controls {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 15px;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            backdrop-filter: blur(5px);
-            transition: opacity 0.3s;
-        }
-
-        /* 滑鼠移開時讓控制面板變透明，避免干擾畫面 */
-        .controls:hover {
-            opacity: 1;
-        }
-        .controls:not(:hover) {
-            opacity: 0.3;
-        }
-
-        .control-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-            font-size: 16px;
-        }
-
-        input[type="text"] {
-            font-size: 16px;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            width: 200px;
-        }
-
-        input[type="color"] {
-            cursor: pointer;
-        }
-
-        input[type="range"] {
-            cursor: pointer;
-        }
-
-        /* 跑馬燈容器與文字樣式 */
         .marquee-container {
             width: 100vw;
             height: 100vh;
@@ -74,71 +24,175 @@
         }
 
         .marquee-text {
-            font-size: 40vw; /* 讓字體極大化 */
+            font-size: 50vh;
             font-weight: bold;
-            color: #FF0000; /* 預設紅色 */
+            color: #FF0000;
             white-space: nowrap;
             position: absolute;
-            text-shadow: 0 0 20px currentColor; /* 增加一點發光效果 */
-            animation: scrollLeft 10s linear infinite; /* 預設動畫速度 */
+            text-shadow: 0 0 20px currentColor;
+            /* 預設只有捲動動畫 */
+            animation: scrollLeft 10s linear infinite;
         }
 
-        /* 跑馬燈由右至左的動畫關鍵影格 */
+        /* 閃爍狀態的 Class */
+        .marquee-text.blinking {
+            /* 同時套用捲動與閃爍動畫 */
+            animation: scrollLeft 10s linear infinite, blinkEffect 0.5s step-end infinite;
+        }
+
         @keyframes scrollLeft {
-            0% {
-                transform: translateX(100vw);
-            }
-            100% {
-                transform: translateX(-100%);
-            }
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+
+        @keyframes blinkEffect {
+            50% { opacity: 0; }
+        }
+
+        /* 右下角星星按鈕 */
+        .star-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 28px;
+            color: white;
+            cursor: pointer;
+            opacity: 0.2;
+            z-index: 1000;
+            transition: opacity 0.3s;
+            user-select: none;
+        }
+
+        .star-toggle:hover { opacity: 0.9; }
+
+        /* 控制面板 */
+        .controls-panel {
+            position: fixed;
+            bottom: 65px;
+            right: 20px;
+            background: rgba(30, 30, 30, 0.95);
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+
+        .controls-panel.active { display: flex; }
+
+        .control-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            color: white;
+            font-size: 15px;
+        }
+
+        input[type="text"] {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: none;
+            width: 150px;
+        }
+
+        input[type="color"] {
+            cursor: pointer;
+            width: 40px;
+            height: 30px;
+            border: none;
+            background: none;
+        }
+
+        input[type="range"] { width: 100px; }
+
+        /* 勾選框樣式稍微放大 */
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <!-- 控制面板 -->
-    <div class="controls">
+    <div class="marquee-container">
+        <div class="marquee-text" id="marqueeText">請點擊星星設定</div>
+    </div>
+
+    <div class="star-toggle" id="starBtn">★</div>
+
+    <div class="controls-panel" id="controlsPanel">
         <div class="control-item">
-            <label for="textInput">文字：</label>
-            <input type="text" id="textInput" value="歡迎光臨！" placeholder="請輸入中文字...">
+            <label>文字</label>
+            <input type="text" id="textInput" placeholder="輸入內容...">
         </div>
         <div class="control-item">
-            <label for="colorInput">顏色：</label>
+            <label>顏色</label>
             <input type="color" id="colorInput" value="#FF0000">
         </div>
         <div class="control-item">
-            <label for="speedInput">速度：</label>
-            <input type="range" id="speedInput" min="2" max="30" value="10">
+            <label>速度</label>
+            <input type="range" id="speedInput" min="2" max="38" value="15">
+        </div>
+        <div class="control-item">
+            <label>閃爍效果</label>
+            <input type="checkbox" id="blinkCheckbox">
         </div>
     </div>
 
-    <!-- 跑馬燈顯示區 -->
-    <div class="marquee-container">
-        <div class="marquee-text" id="marqueeText">歡迎光臨！</div>
-    </div>
-
-    <!-- 互動邏輯腳本 -->
     <script>
+        const starBtn = document.getElementById('starBtn');
+        const controlsPanel = document.getElementById('controlsPanel');
         const textInput = document.getElementById('textInput');
         const colorInput = document.getElementById('colorInput');
         const speedInput = document.getElementById('speedInput');
+        const blinkCheckbox = document.getElementById('blinkCheckbox');
         const marqueeText = document.getElementById('marqueeText');
 
-        // 監聽文字輸入，即時更新大字報內容
-        textInput.addEventListener('input', function(e) {
+        // 切換面板
+        starBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            controlsPanel.classList.toggle('active');
+            starBtn.style.opacity = controlsPanel.classList.contains('active') ? '0.9' : '0.2';
+        });
+
+        // 點擊面板內部不收合
+        controlsPanel.addEventListener('click', (e) => e.stopPropagation());
+
+        // 文字更新
+        textInput.addEventListener('input', (e) => {
             marqueeText.textContent = e.target.value || ' ';
         });
 
-        // 監聽顏色選擇，即時更新文字顏色與發光效果
-        colorInput.addEventListener('input', function(e) {
+        // 顏色更新
+        colorInput.addEventListener('input', (e) => {
             marqueeText.style.color = e.target.value;
         });
 
-        // 監聽速度拉桿，調整動畫執行時間 (數值越大跑越快 = 動畫時間越短)
-        speedInput.addEventListener('input', function(e) {
-            // 用 32 減去目前數值來反轉邏輯，讓拉桿往右(數值大)時秒數變小(速度變快)
-            const duration = 32 - e.target.value;
-            marqueeText.style.animationDuration = duration + 's';
+        // 速度更新
+        speedInput.addEventListener('input', (e) => {
+            const duration = 40 - e.target.value; 
+            marqueeText.style.animationDuration = duration + 's, 0.5s'; // 保持閃爍頻率不變
+        });
+
+        // 閃爍切換
+        blinkCheckbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                marqueeText.classList.add('blinking');
+            } else {
+                marqueeText.classList.remove('blinking');
+            }
+        });
+
+        // 點擊空白處收起
+        document.addEventListener('click', () => {
+            controlsPanel.classList.remove('active');
+            starBtn.style.opacity = '0.2';
         });
     </script>
 </body>
