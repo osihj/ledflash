@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LED 舞台大字報 - 專業精簡版</title>
+    <title>LED 舞台大字報 - 速度同步修正版</title>
     <style>
-        /* ==============================
-           基礎與容器設定
-           ============================== */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #000000; /* 固定純黑背景 */
+            background-color: #000000;
             overflow: hidden;
             font-family: 'Arial Black', 'Impact', '微軟正黑體', sans-serif;
         }
@@ -27,6 +24,7 @@
             z-index: 10;
         }
 
+        /* 核心文字樣式 */
         .marquee-text {
             font-size: 50vh;
             font-weight: 900;
@@ -34,17 +32,17 @@
             white-space: nowrap;
             position: absolute;
             text-shadow: 0 0 15px currentColor;
-            animation: scrollLeft 10s linear infinite;
+            /* 將捲動動畫分開定義，避免被覆蓋 */
+            animation-name: scrollLeft;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
             will-change: transform;
         }
 
-        /* ==============================
-           特效 CSS
-           ============================== */
-
-        /* 1. 閃爍效果 */
+        /* 1. 閃爍效果：僅定義閃爍部分，捲動由 JS 控制 */
         .effect-blink {
-            animation: scrollLeft 10s linear infinite, blinkAnim 0.4s step-end infinite !important;
+            animation-name: scrollLeft, blinkAnim !important;
+            animation-timing-function: linear, step-end !important;
         }
         @keyframes blinkAnim { 50% { opacity: 0; } }
 
@@ -54,13 +52,14 @@
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: scrollLeft 10s linear infinite, rainbowAnim 3s linear infinite !important;
+            animation-name: scrollLeft, rainbowAnim !important;
+            animation-timing-function: linear, linear !important;
             text-shadow: none !important;
             filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
         }
         @keyframes rainbowAnim { to { background-position: 200% center; } }
 
-        /* 3. 像素點陣遮罩 (LED 顆粒感) */
+        /* LED 像素感 */
         .pixel-overlay {
             display: none;
             position: fixed;
@@ -74,52 +73,34 @@
 
         @keyframes scrollLeft { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
 
-        /* ==============================
-           控制面板 (星星)
-           ============================== */
-        .star-toggle { 
-            position: fixed; bottom: 25px; right: 25px; 
-            font-size: 30px; color: white; cursor: pointer; 
-            opacity: 0.2; z-index: 1000; transition: 0.3s; user-select: none; 
-        }
+        /* 控制面板 */
+        .star-toggle { position: fixed; bottom: 25px; right: 25px; font-size: 30px; color: white; cursor: pointer; opacity: 0.2; z-index: 1000; transition: 0.3s; }
         .star-toggle:hover { opacity: 1; transform: scale(1.2); }
-
         .controls-panel {
-            position: fixed; bottom: 80px; right: 25px; 
-            background: rgba(25, 25, 25, 0.95);
-            padding: 20px; border-radius: 16px; display: none; 
-            flex-direction: column; gap: 12px;
-            backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 999; box-shadow: 0 10px 40px rgba(0,0,0,0.8); width: 280px;
+            position: fixed; bottom: 80px; right: 25px; background: rgba(25, 25, 25, 0.95);
+            padding: 20px; border-radius: 16px; display: none; flex-direction: column; gap: 12px;
+            backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); z-index: 999; width: 280px;
         }
         .controls-panel.active { display: flex; }
-
         .control-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: white; font-size: 14px; }
-        
-        input[type="text"], select { 
-            padding: 8px; border-radius: 6px; border: none; 
-            width: 160px; background: #333; color: white; 
-        }
+        input[type="text"], select { padding: 8px; border-radius: 6px; border: none; width: 160px; background: #333; color: white; }
         input[type="color"] { cursor: pointer; width: 45px; height: 35px; border: none; background: none; }
         input[type="range"] { width: 160px; accent-color: #00e5ff; }
     </style>
 </head>
 <body id="bodyRoot">
 
-    <!-- 像素點陣疊加層 -->
     <div class="pixel-overlay"></div>
-
     <div class="marquee-container">
-        <div class="marquee-text" id="marqueeText">請設定文字</div>
+        <div class="marquee-text" id="marqueeText" style="animation-duration: 15s;">請輸入文字</div>
     </div>
 
-    <!-- 右下角星星隱藏開關 -->
     <div class="star-toggle" id="starBtn">★</div>
 
     <div class="controls-panel" id="controlsPanel">
         <div class="control-item">
             <label>看板文字</label>
-            <input type="text" id="textInput" placeholder="在此輸入中文字...">
+            <input type="text" id="textInput" placeholder="輸入內容...">
         </div>
         <div class="control-item">
             <label>主要顏色</label>
@@ -127,7 +108,7 @@
         </div>
         <div class="control-item">
             <label>捲動速度</label>
-            <input type="range" id="speedInput" min="2" max="38" value="18">
+            <input type="range" id="speedInput" min="2" max="38" value="25">
         </div>
         <div class="control-item">
             <label>特效樣式</label>
@@ -154,7 +135,22 @@
         const marqueeText = document.getElementById('marqueeText');
         const bodyRoot = document.getElementById('bodyRoot');
 
-        // 開關面板邏輯
+        // 更新速度的統一函式
+        function updateSpeed() {
+            const speedVal = speedInput.value;
+            const scrollDuration = 40 - speedVal; // 捲動秒數
+            
+            // 根據不同效果，套用多重動畫秒數
+            if (effectSelect.value === 'effect-blink') {
+                marqueeText.style.animationDuration = `${scrollDuration}s, 0.4s`;
+            } else if (effectSelect.value === 'effect-rainbow') {
+                marqueeText.style.animationDuration = `${scrollDuration}s, 3s`;
+            } else {
+                marqueeText.style.animationDuration = `${scrollDuration}s`;
+            }
+        }
+
+        // 面板切換
         starBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             controlsPanel.classList.toggle('active');
@@ -167,25 +163,18 @@
         });
         controlsPanel.addEventListener('click', (e) => e.stopPropagation());
 
-        // 文字更新
-        textInput.addEventListener('input', (e) => {
-            marqueeText.textContent = e.target.value || ' ';
-        });
-
-        // 顏色更新
+        // 即時內容與顏色
+        textInput.addEventListener('input', (e) => { marqueeText.textContent = e.target.value || ' '; });
         colorInput.addEventListener('input', (e) => {
             if (effectSelect.value !== 'effect-rainbow') {
                 marqueeText.style.color = e.target.value;
             }
         });
 
-        // 速度更新
-        speedInput.addEventListener('input', (e) => {
-            const duration = 40 - e.target.value; 
-            marqueeText.style.animationDuration = duration + 's, 0.4s, 3s'; 
-        });
+        // 速度變動時
+        speedInput.addEventListener('input', updateSpeed);
 
-        // 特效切換
+        // 特效切換時，也要重新執行一次速度更新
         effectSelect.addEventListener('change', (e) => {
             marqueeText.classList.remove('effect-blink', 'effect-rainbow');
             if (e.target.value) {
@@ -194,16 +183,17 @@
             if (e.target.value !== 'effect-rainbow') {
                 marqueeText.style.color = colorInput.value;
             }
+            updateSpeed(); // 關鍵：換效果時強制同步目前拉桿的速度秒數
         });
 
         // 像素感切換
         pixelCheckbox.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                bodyRoot.classList.add('pixel-active');
-            } else {
-                bodyRoot.classList.remove('pixel-active');
-            }
+            if (e.target.checked) bodyRoot.classList.add('pixel-active');
+            else bodyRoot.classList.remove('pixel-active');
         });
+
+        // 初始化速度
+        updateSpeed();
     </script>
 </body>
 </html>
